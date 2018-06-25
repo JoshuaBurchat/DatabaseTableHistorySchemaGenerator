@@ -3,3 +3,11 @@
 ################################################################################
 
 /packages
+/TableHistorySchemaGenerator.App/bin/Debug
+/TableHistorySchemaGenerator.App/obj/Debug
+/TableHistorySchemaGenerator.Core/bin/Debug
+/TableHistorySchemaGenerator.Core/obj/Debug
+/TableHistorySchemaGenerator.DacPack/bin/Debug
+/TableHistorySchemaGenerator.DacPack/obj/Debug
+/TableHistorySchemaGenerator.VSExtensions/bin/Debug
+/TableHistorySchemaGenerator.VSExtensions/obj/Debug

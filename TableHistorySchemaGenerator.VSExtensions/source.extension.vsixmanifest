@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="TableHistorySchemaGenerator.VSExtensions.Joshua Burchat.936cf672-a41a-402b-9dce-aef95a73545b" Version="1.0" Language="en-US" Publisher="Joshua Burchat" />
+    <DisplayName>Table History Schema Generator</DisplayName>
+    <Description xml:space="preserve">This extension is meant to be used while in a SQL Server Database Project to generate history tables. 
+
+When in the database project this extension will give you the menu item Tools -&gt; Generate History Tables.
+
+History tables are mirrored tables which are used to store all of the deleted versions of the records from the main tables. 
+
+When this command is executed it will generate the following per table: 
+- Mirrored tables, 
+- Triggers to perform the copy operation, 
+- View that unions the full history and current record together.
+
+It will only generate the history tables for those who have Created By and Created Timestamp columns (names configurable).
+
+See full documentation for configuration details, as well as a larger description of the subject matter.
+</Description>
+    <MoreInfo>https://github.com/JoshuaBurchat</MoreInfo>
+    <License>MIT</License>
+    <GettingStartedGuide>index.html</GettingStartedGuide>
+    <ReleaseNotes>index.html</ReleaseNotes>
+    <Icon>Resources\DbHistoryScriptsPackage.ico</Icon>
+    <PreviewImage>Resources\DbHistoryScriptsPackage.ico</PreviewImage>
+    <Tags>SQL Server, Database Project, Audit Tables, History Tables, Script Generation</Tags>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0]" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    <Dependency Id="Microsoft.VisualStudio.MPF.14.0" DisplayName="Visual Studio MPF 14.0" d:Source="Installed" Version="[14.0]" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="TableHistorySchemaGenerator.Core" Path="|TableHistorySchemaGenerator.Core|" AssemblyName="|TableHistorySchemaGenerator.Core;AssemblyName|" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="TableHistorySchemaGenerator.DacPack" Path="|TableHistorySchemaGenerator.DacPack|" AssemblyName="|TableHistorySchemaGenerator.DacPack;AssemblyName|" />
+  </Assets>
+</PackageManifest>
