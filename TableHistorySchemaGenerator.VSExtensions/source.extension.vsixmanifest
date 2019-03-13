@@ -19,7 +19,6 @@ It will only generate the history tables for those who have Created By and Creat
 See full documentation for configuration details, as well as a larger description of the subject matter.
 </Description>
     <MoreInfo>https://github.com/JoshuaBurchat</MoreInfo>
-    <License>MIT</License>
     <GettingStartedGuide>index.html</GettingStartedGuide>
     <ReleaseNotes>index.html</ReleaseNotes>
     <Icon>Resources\DbHistoryScriptsPackage.ico</Icon>

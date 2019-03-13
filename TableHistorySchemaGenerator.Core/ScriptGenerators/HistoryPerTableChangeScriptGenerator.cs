@@ -36,7 +36,7 @@ namespace TableHistorySchemaGenerator.Core.ScriptGenerators
             if (_historyCommonConfiguration.IncludeDropOrAlterStatements)
             {
                 builder.AppendFormat(
-                   @"IF NOT EXISTS (SELECT 1 FROM sys.schemas WHERE name = 'hst')  EXEC('CREATE SCHEMA [hst]');   
+                   @"IF NOT EXISTS (SELECT 1 FROM sys.schemas WHERE name = '{0}')  EXEC('CREATE SCHEMA [{0}]');   
                     GO
                     ",
                    schema.Name);
@@ -102,50 +102,57 @@ namespace TableHistorySchemaGenerator.Core.ScriptGenerators
 
             builder.AppendFormat(@"
             CREATE VIEW {0}.{1} AS
-            SELECT {2} AllRecords.ModifiedBy, AllRecords.ModifiedTimestamp, FirstRecord.CreatedBy, FirstRecord.CreatedTimestamp
+            SELECT {2} AllRecords.[{7}], AllRecords.[{8}], FirstRecord.[{7}] As [First{7}], FirstRecord.{8} AS [First{8}]
             FROM
             (
                 SELECT {3}
                       CAST(1 AS BIT) AS IsCurrent,
-                      [CreatedBy] AS ModifiedBy,
-                      [CreatedTimestamp] AS ModifiedTimestamp
+                      [{7}],
+                      [{8}] 
                 FROM {5}
                 UNION ALL
                 SELECT {4}
                        CAST(0 AS BIT) IsCurrent,
-                       [CreatedBy] AS ModifiedBy,
-                       [CreatedTimestamp] AS ModifiedTimestamp
+                       [{7}] ,
+                       [{8}] 
                 FROM {6}
             ) AS AllRecords
             LEFT JOIN (
                 SELECT DISTINCT -- incase dates duplicate..
-            ", _historyCommonConfiguration.Schema, viewName, allColumnBuilder, regularColumnBuilder, historyColumnBuilder, table.FullName, table.HistoricalTable.FullName);
+            ", _historyCommonConfiguration.Schema, viewName, allColumnBuilder, regularColumnBuilder, historyColumnBuilder, table.FullName, table.HistoricalTable.FullName
+            , _historyCommonConfiguration.ExpectedCreatedByColumnName
+            , _historyCommonConfiguration.ExpectedCreatedTimestampColumnName
+
+
+            );
 
             foreach (var columnName in table.PrimaryColumnNames)
                 builder.AppendFormat("FirstRecordsMatch.[{0}],\n", columnName);
 
-            builder.Append(@"
-                        FirstRecordsMatch.[CreatedTimestamp] , 
-                        FirstRecordsMatch.CreatedBy
+            builder.AppendFormat(@"
+                        FirstRecordsMatch.[{0}] , 
+                        FirstRecordsMatch.[{1}]
                 FROM 
                 (
                     SELECT	
-            ");
+            ", _historyCommonConfiguration.ExpectedCreatedByColumnName
+            , _historyCommonConfiguration.ExpectedCreatedTimestampColumnName);
             foreach (var columnName in table.PrimaryColumnNames)
                 builder.AppendFormat("[{0}],\n", columnName);
             builder.AppendFormat(@"
-                            MIN([CreatedTimestamp]) AS [CreatedTimestamp]
+                            MIN([{1}]) AS [{1}]
                     FROM	{0}
                     GROUP BY ID
                 ) FirstRecordGroup
                 JOIN {0} AS FirstRecordsMatch  
-                    ON ", table.HistoricalTable.FullName);
+                    ON ", table.HistoricalTable.FullName, _historyCommonConfiguration.ExpectedCreatedTimestampColumnName);
             foreach (var columnName in table.PrimaryColumnNames)
                 builder.AppendFormat("FirstRecordGroup.[{0}] = FirstRecordsMatch.[{0}] AND\n", columnName);
             builder.AppendFormat(@"
-                    FirstRecordGroup.[CreatedTimestamp] = FirstRecordsMatch.[CreatedTimestamp]
+                    FirstRecordGroup.[{0}] = FirstRecordsMatch.[{0}]
                 ) AS FirstRecord
-                    ON  ");
+                    ON  ", _historyCommonConfiguration.ExpectedCreatedTimestampColumnName
+                    );
             foreach (var columnName in table.PrimaryColumnNames)
                 builder.AppendFormat("AllRecords.[{0}] = AllRecords.[{0}] AND ", columnName);
 
